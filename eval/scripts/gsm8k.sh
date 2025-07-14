@@ -1,5 +1,6 @@
 MODEL_PTH=$1
 MY_DTYPE=$2
+
 TOKENIZER_PTH="${MODEL_PTH}"
 WORK_PTH="${MODEL_PTH}/0.gsm8k_$(date "+%Y-%m-%d_%H:%M:%S")"
 mkdir "$WORK_PTH"

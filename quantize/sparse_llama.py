@@ -9,7 +9,7 @@ import quant
 from tqdm import tqdm
 
 from impart_gptq import GPTQ, Observer
-from utils import find_layers, DEV, set_seed, get_wikitext2, get_ptb, get_c4, get_ptb_new, get_c4_new, get_loaders, export_quant_table, gen_conditions
+from quant_utils import find_layers, DEV, set_seed, get_wikitext2, get_ptb, get_c4, get_ptb_new, get_c4_new, get_loaders, export_quant_table, gen_conditions, parse_args
 from texttable import Texttable
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 import gc
@@ -26,7 +26,6 @@ try:
     from transformers.models.llama.modeling_llama import repeat_kv
 except:
     pass
-from utils.utils import parse_args, load_llava
 try:
     from model.multiLlama import multiLlamaFroCausalLM
     from model.evalLlama import evalLlamaFroCausalLM
@@ -540,65 +539,7 @@ def llama_sequential(model, dataloader, dev):
                         for name in all_find_bits:
                             all_find_bits[name].sort(reverse=True)
                 else:
-                    from find_bits import UV_find_optimal
-                    print("finding rank")
-                    gptqs["quant_type"] =  "V"
-                    quant_type = "V"
-                    for name in names:
-                        layer.get_submodule(name).pre_quant(pre_col=0, cur_col=0, typing="all", check=False)
-                        name = f"model.layers.{i}." + name        
-                        gptq = GPTQ(model.get_submodule(name), quant_type=quant_type,observe=args.observe)
-                        gptqs[name] = gptq
-                    
-                    for j in range(0,args.nsamples * num, args.batch_size):
-                        if num == 1:
-                            # layer(inps[j:j+args.batch_size], attention_mask=attention_mask, position_ids=position_ids)  # inps to cuda
-                            layer(inps[j:j+args.batch_size], attention_mask=attention_mask, position_ids=position_ids)  # inps to cuda
-                        else:
-                            # layer(inps[j:j+args.batch_size].to("cuda"), attention_mask=attention_mask, position_ids=position_ids, index=j // args.nsamples)
-                            layer(inps[j:j+args.batch_size].to("cuda"), attention_mask=attention_mask, position_ids=position_ids, index=j // args.nsamples)
-                    funs = []
-                    pool = Pool(3)
-                    find_time = time.time()
-                    for k, v in gptqs.items():
-                        if "proj" in k:
-                            delta: Delta = model.get_submodule(k) 
-                            gptq: GPTQ  = v
-                            loss: torch.Tensor = gptq.get_quant_loss(percdamp=args.percdamp, groupsize=args.groupsize, actorder=args.act_order)
-                            in_s, out_s = delta.get_in_out_shape()
-                            assert args.v_target_bit == args.u_target_bit, "not implement for u, v bit not equal"
-                            if args.u_bit is not None or args.v_bit is not None:
-                                assert args.u_bit is not None, "not implement for v"
-                                t = torch.arange(0,17) * in_s / in_s / out_s # in_s代表V的输入维度
-                                t[1:] = t[1:] + args.u_bit * out_s / in_s / out_s # 加入U的输入维度， 0bit默认u也是0bit
-                                t = t * args.v_target_bit # 选择目标比特数
-                            else:
-                                t = torch.arange(0,17) * (in_s + out_s) * args.v_target_bit / in_s / out_s # 这里存储空间包含了相同精度的 U
-                            # UV_find_optimal(loss.cpu().numpy(), t.cpu().numpy())
-                            if args.use_async_find:
-                                funs.append((k , pool.apply_async(UV_find_optimal, args=(loss.cpu().numpy(), t.cpu().numpy()))))
-                            else:
-                                layer_bits, pre_cols, cur_cols, count = UV_find_optimal(loss.cpu().numpy(), t.cpu().numpy())
-                                print(f"finding {k} done, using {count} ranks")
-                                layer_bits = layer_bits.tolist()
-                                if 0 in layer_bits:
-                                    layer_bits.remove(0)
-                                all_find_bits[k] = layer_bits
-                                for idx, bit in enumerate(layer_bits):
-                                    all_index_dict[k + f'_{bit}'] = [pre_cols[idx], cur_cols[idx]]
-                    pool.close()
-                    pool.join()
-                    for k, f in funs:
-                        layer_bits, pre_cols, cur_cols, count = f.get()
-                        print(f"finding {k} done, using {count} ranks")
-                        layer_bits = layer_bits.tolist()
-                        if 0 in layer_bits:
-                            layer_bits.remove(0)
-                        all_find_bits[k] = layer_bits
-                        for idx, bit in enumerate(layer_bits):
-                            all_index_dict[k + f'_{bit}'] = [pre_cols[idx], cur_cols[idx]]
-                    gptqs.clear()
-                    print(f"finding over, cost times: {(time.time() - find_time):.2f}s")
+                    raise NotImplementedError
 
             if args.no_quant:
                 for name in names:
@@ -1196,14 +1137,8 @@ if __name__ == '__main__':
         if "llava" not in args.model[0].lower():
             model = get_llama(args.model[0])
             model.eval()
-
             if "llama-3" in args.model[0].lower():
                 model.seqlen = 4096
-        else:
-            model = load_llava(args.model[0],"cuda" if torch.cuda.is_available() else "cpu")
-            if not hasattr(model, 'seqlen'):
-                model.seqlen = 2048
-            # import pdb ; pdb.set_trace()
 
     dataloader, testloader = get_loaders(args.dataset, nsamples=args.nsamples, seed=args.seed, model=args.model[0], seqlen=2048) # model.seqlen
     # import pdb ; pdb.set_trace()

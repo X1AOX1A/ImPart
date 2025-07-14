@@ -1,0 +1,15 @@
+ftm_dir: "meta-llama/Llama-2-13b-chat-hf"
+svd_dir: "saves/precompuated_svd/llama2_chat_13b/delta_weight.pt"
+save_dir: "saves/ckpt/sparsify/llama2_chat_13b/impart"
+log_dir: "saves/eval/sparsify/llama2_chat_13b/impart"
+
+# model args
+weight_types: ["self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj",
+    "self_attn.o_proj", "mlp.gate_proj", "mlp.up_proj", "mlp.down_proj"]
+layer_num: 40
+weight_name: "model.layers.{layer_num}.{weight_type}"
+
+# mask args
+compression_ratio: 32
+preprune_ratio: 0.8
+C: 0.5

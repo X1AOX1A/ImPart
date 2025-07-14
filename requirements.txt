@@ -1,0 +1,15 @@
+accelerate==0.32.1
+cvxpy==1.6.0
+datasets==2.18.0
+jsonlines==4.0.0
+matplotlib==3.9.2
+numpy==1.26.0
+PyYAML==6.0.2
+safetensors==0.4.5
+texttable==1.7.0
+toml==0.10.2
+torch==2.1.1+cu118
+tqdm==4.66.2
+transformers==4.37.0
+triton==2.1.0
+pyscipopt==5.2.1

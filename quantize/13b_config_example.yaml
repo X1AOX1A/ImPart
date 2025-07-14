@@ -1,0 +1,19 @@
+attn_fp16_col: 0
+mlp_fp16_col: 0
+attn_int8_col: 2
+mlp_int8_col: 2 
+attn_int4_col: 0
+mlp_int4_col: 0 
+attn_int3_col: 32
+mlp_int3_col: 32
+attn_int2_col: 5120
+mlp_int2_col: 5120
+wbits: 4
+true_sequential: true
+act_order: true
+groupsize: 128
+baseModel: "meta-llama/Llama-2-13b-hf"
+bits: 
+  - 8
+  - 3
+  - 2

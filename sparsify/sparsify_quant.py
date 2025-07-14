@@ -102,7 +102,7 @@ def apply_sparsify(matrix, sparsity_ratio_list):
         p = int(m * sparsity_ratio_list[col])
         indices = torch.randperm(m)[:p]
         mask[indices, col] = 0
-    return matrix * mask
+    return matrix * mask, mask
 
 
 def cal_overall_alpha_qt(attn_uv_alpha_qt, mlp_uv_alpha_qt,
@@ -208,13 +208,20 @@ def main(args):
 
             # sparsify
             if args.C != "only_lowrank":
-                u = (apply_sparsify(u, sparsity_ratio_list) / torch.tensor([1-m for m in sparsity_ratio_list])).to(dtype_16)
-                v = (apply_sparsify(v, sparsity_ratio_list) / torch.tensor([1-m for m in sparsity_ratio_list])).to(dtype_16)
+                # u = (apply_sparsify(u, sparsity_ratio_list) / torch.tensor([1-m for m in sparsity_ratio_list])).to(dtype_16)
+                # v = (apply_sparsify(v, sparsity_ratio_list) / torch.tensor([1-m for m in sparsity_ratio_list])).to(dtype_16)
+                u, u_mask = apply_sparsify(u, sparsity_ratio_list)
+                v, v_mask = apply_sparsify(v, sparsity_ratio_list)
+                u = (u / torch.tensor([1-m for m in sparsity_ratio_list])).to(dtype_16)
+                v = (v / torch.tensor([1-m for m in sparsity_ratio_list])).to(dtype_16)
 
             # replace weight
             svd_delta[weight_name+".U"] = u
             svd_delta[weight_name+".S"] = s
             svd_delta[weight_name+".V"] = v
+            if args.C != "only_lowrank":
+                svd_delta[weight_name + ".U_mask"] = u_mask
+                svd_delta[weight_name + ".V_mask"] = v_mask
 
             # log
             if args.C == "only_lowrank":

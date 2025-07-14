@@ -123,22 +123,18 @@ if __name__ == '__main__':
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from utils.utils import smart_tokenizer_and_embedding_resize
 
-    to_merge = {
-        "ptm": "/nfsdata/yany/download/merge/from_llama2_13b/meta-llama/Llama-2-13b-hf",
-        "math": "/nfsdata/yany/download/merge/from_llama2_13b/vanillaOVO/WizardMath-13B-V1.0",
-        "code": "/nfsdata/yany/download/merge/from_llama2_13b/code/magicoder-llama-2-13b-bf16"
-    }
+    def run(merge_method, ptm_pth, math_pth, code_pth, chat_pth, save_pth):
+        ptm_model = AutoModelForCausalLM.from_pretrained(ptm_pth, torch_dtype=torch.float16, device_map="cpu")
+        math_model = AutoModelForCausalLM.from_pretrained(math_pth, torch_dtype=torch.float16, device_map="cpu")
+        code_model = AutoModelForCausalLM.from_pretrained(code_pth, torch_dtype=torch.float16, device_map="cpu")
+        chat_model = AutoModelForCausalLM.from_pretrained(chat_pth, torch_dtype=torch.float16, device_map="cpu")
+        ptm_tokenizer = AutoTokenizer.from_pretrained(ptm_pth)
+        math_tokenizer = AutoTokenizer.from_pretrained(math_pth)
+        code_tokenizer = AutoTokenizer.from_pretrained(code_pth)
+        chat_tokenizer = AutoTokenizer.from_pretrained(chat_pth)
 
-    def run(merge_method=None):
-        ptm_model = AutoModelForCausalLM.from_pretrained(to_merge["ptm"], torch_dtype=torch.float16, device_map="cpu")
-        math_model = AutoModelForCausalLM.from_pretrained(to_merge["math"], torch_dtype=torch.float16, device_map="cpu")
-        code_model = AutoModelForCausalLM.from_pretrained(to_merge["code"], torch_dtype=torch.float16, device_map="cpu")
-        ptm_tokenizer = AutoTokenizer.from_pretrained(to_merge["ptm"])
-        math_tokenizer = AutoTokenizer.from_pretrained(to_merge["math"])
-        code_tokenizer = AutoTokenizer.from_pretrained(to_merge["code"])
-
-        model_dict = {"ptm": ptm_model, "math": math_model, "code": code_model}
-        tokenizer_dict = {"ptm": ptm_tokenizer, "math": math_tokenizer, "code": code_tokenizer}
+        model_dict = {"ptm": ptm_model, "math": math_model, "code": code_model, "chat": chat_model}
+        tokenizer_dict = {"ptm": ptm_tokenizer, "math": math_tokenizer, "code": code_tokenizer, "chat": chat_tokenizer}
 
         for task in model_dict:
             smart_tokenizer_and_embedding_resize(
@@ -148,7 +144,7 @@ if __name__ == '__main__':
             )
 
         exclude_param_names_regex = []
-        models_to_merge = [math_model, code_model]
+        models_to_merge = [math_model, code_model, chat_model]
         tv_to_merge = []
         for _ in range(len(models_to_merge)):
             print("Get Task Vector")
@@ -159,12 +155,13 @@ if __name__ == '__main__':
                     exclude_param_names_regex=exclude_param_names_regex
                 )
             )
-            del models_to_merge[0]  # 用完一个 ftm model 删一个 ftm model
+            del models_to_merge[0]
             gc.collect()
 
         merger = Merger(merge_method=merge_method)
         merged_model = merger.merge(pretrained_model=ptm_model, models_to_merge_task_vectors=tv_to_merge)
-
+        merged_model.save_pretrained(save_pth)
+        ptm_tokenizer.save_pretrained(save_pth)
     Fire(run)
 
     # e.g. python src/merge.py --merge_method ta_0.3
