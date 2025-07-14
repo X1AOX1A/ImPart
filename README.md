@@ -2,26 +2,12 @@
 
 The official repository containing the introduction and code for our ACL 2025 paper: [<span style="font-variant: small-caps;">ImPart</span>: Importance-Aware Delta-Sparsification for Improved Model Compression and Merging in LLMs](https://arxiv.org/abs/2504.13237).
 
-[//]: # (<p align="center">|)
-
-[//]: # (  <a href="#-news"> 🔥 News</a> |)
-
-[//]: # (  <a href="#-motivation">💡 Motivation</a> |)
-
-[//]: # (  <a href="#-seqar">🔖 <span style="font-variant: small-caps;">ImPart</span></a> |)
-
-[//]: # (</p>)
-
-[//]: # ()
-[//]: # (<p align="center">|)
-
-[//]: # (  <a href="#️-quick-start"> ⚡️ Quick Start </a> |)
-
-[//]: # (  <a href="#-citation">📓 Citation</a> | )
-
-[//]: # (  <a href="https://arxiv.org/abs/2407.01902">📃 Paper </a>|)
-
-[//]: # (</p>)
+<p align="center">|
+  <a href="#-news"> 🔥 News</a> |
+  <a href="#-seqar">🔖 <span style="font-variant: small-caps;">ImPart</span></a> |
+  <a href="#️-quick-start"> ⚡️ Quick Start </a> |
+  <a href="#-citation">📓 Citation</a> |
+</p>
 
 # 🔥 News
 - **May 2025**: Our paper has been accepted by **ACL 2025 main conference**.
@@ -102,12 +88,18 @@ bash eval/scripts/math.sh "fine-tuned model name or path" "fp16"
 
 ### Code Generation
 ```shell
-
+# HumanEval
+bash eval/scripts/humaneval.sh "fine-tuned model name or path" "fp16"
+# MBPP
+bash eval/scripts/mbpp.sh "fine-tuned model name or path" "fp16"
 ```
 
 ### Instruction Following
 ```shell
-
+# IFEval
+bash eval/scripts/ifeval.sh "fine-tuned model name or path" "fp16"
+# MBPP
+bash eval/scripts/alpacaeval.sh "fine-tuned model name or path" "model template"
 ```
 
 ---
