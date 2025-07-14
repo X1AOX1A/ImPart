@@ -13,6 +13,8 @@ The official repository containing the introduction and code for our ACL 2025 pa
 - **May 2025**: Our paper has been accepted by **ACL 2025 main conference**.
 - **Apr 2025**: We released our paper on [**arxiv**](https://arxiv.org/abs/2504.13237).
 
+---
+
 # 🔖 <span style="font-variant: small-caps;">ImPart</span>: Overview
 ### <span style="font-variant: small-caps;">ImPart</span>: **Imp**ortance-**A**ware Delta-Spa**r**sifica**t**ion
 - Motivated by the observation that singular vectors with larger singular values encode more important task-specific information.
@@ -26,6 +28,7 @@ The official repository containing the introduction and code for our ACL 2025 pa
 <span id="ImPart"></span>
 ![impart_results_across](./assets/imgs/impart_results_across.png)
 
+---
 
 # ⚡️ Quick Start
 ## Requirments
@@ -42,10 +45,10 @@ pip install -r requirements.txt
 | **Task** | **Fine-tuned**                                                                   | B**ackbone**                                                        | **Benchmark**                                           | **Benchmark**                                          |
 |------|------------------------------------------------------------------------------|-----------------------------------------------------------------|---------------------------------------------------------|--------------------------------------------------------|
 | **Math** | [WizardMath-13B-V1.0](https://huggingface.co/vanillaOVO/WizardMath-13B-V1.0) | [LLaMA-2-13B](https://huggingface.co/meta-llama/Llama-2-13b-hf) | [GSM8K](https://huggingface.co/datasets/openai/gsm8k)   | [MATH](https://github.com/hendrycks/math/)             |
-| **Code** | [WizardCoder-13B]()                                                          | [CodeLlama-13B](codellama/CodeLlama-13b-hf)                     | [HumanEval](https://github.com/openai/human-eval)                                           | [MBPP](https://github.com/google-research/google-research/blob/master/mbpp)                                               | 
-| **Chat** | [LLaMA-2-13B-Chat]()                                                         | [LLaMA-2-13B](https://huggingface.co/meta-llama/Llama-2-13b-hf) | [IFEval](https://huggingface.co/datasets/google/IFEval) | [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval) |
-| **Chat** | [LLaMA-2-7B-Chat]()                                                          | [LLaMA-2-7B](https://huggingface.co/meta-llama/Llama-2-13b-hf)  | [IFEval](https://huggingface.co/datasets/google/IFEval) | [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval) |
-| **Chat** | [LLaMA-3-8B-Instruct]()                                                      | [LLaMA-3-8B](https://huggingface.co/meta-llama/Llama-2-13b-hf)  | [IFEval](https://huggingface.co/datasets/google/IFEval) | [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval) |
+| **Code** | [WizardCoder-13B](https://huggingface.co/WizardLMTeam/WizardCoder-Python-13B-V1.0)                                                          | [CodeLlama-13B](https://huggingface.co/codellama/CodeLlama-13b-hf)                     | [HumanEval](https://github.com/openai/human-eval)                                           | [MBPP](https://github.com/google-research/google-research/blob/master/mbpp)                                               | 
+| **Chat** | [LLaMA-2-13B-Chat](https://huggingface.co/meta-llama/Llama-2-13b-chat-hf)                                                         | [LLaMA-2-13B](https://huggingface.co/meta-llama/Llama-2-13b-hf) | [IFEval](https://huggingface.co/datasets/google/IFEval) | [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval) |
+| **Chat** | [LLaMA-2-7B-Chat](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf)                                                          | [LLaMA-2-7B](https://huggingface.co/meta-llama/Llama-2-7b-hf)  | [IFEval](https://huggingface.co/datasets/google/IFEval) | [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval) |
+| **Chat** | [LLaMA-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct)                                                      | [LLaMA-3-8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B)  | [IFEval](https://huggingface.co/datasets/google/IFEval) | [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval) |
 
 
 ## SVD $\Delta W$
