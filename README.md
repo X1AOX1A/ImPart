@@ -101,7 +101,7 @@ bash eval/scripts/mbpp.sh "fine-tuned model name or path" "fp16"
 ```shell
 # IFEval
 bash eval/scripts/ifeval.sh "fine-tuned model name or path" "fp16"
-# MBPP
+# AlpacaEval
 bash eval/scripts/alpacaeval.sh "fine-tuned model name or path" "model template"
 ```
 
